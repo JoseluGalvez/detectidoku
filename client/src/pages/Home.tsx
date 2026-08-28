@@ -1,33 +1,74 @@
-import { useAuth } from "@/_core/hooks/useAuth";
+import { useMemo, useState } from "react";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
-import { Streamdown } from 'streamdown';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Progress } from "@/components/ui/progress";
+import { Separator } from "@/components/ui/separator";
+import { Textarea } from "@/components/ui/textarea";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { BookOpen, Check, ChevronRight, Copy, Fingerprint, Grid3X3, History, Lightbulb, LockKeyhole, Play, RotateCcw, Sparkles, WandSparkles } from "lucide-react";
+import { toast } from "sonner";
 
-/**
- * All content in this page are only for example, replace with your own feature implementation
- * When building pages, remember your instructions in Frontend Workflow, Frontend Best Practices, Design Guide and Common Pitfalls
- */
-export default function Home() {
-  // The useAuth hook provides authentication state.
-  // To implement login/logout, call logout(), or start login from an event
-  // handler: onClick={() => startLogin()} (imported from "@/const"). Never call
-  // startLogin() during render (no href={startLogin()}) — it mints a one-time
-  // nonce cookie and must run only at the moment of navigation.
-  let { user, loading, error, isAuthenticated, logout } = useAuth();
+const templates = [
+  { id: "atelier", title: "El último ajuste", subtitle: "Taller mecánico", difficulty: "Intermedio", size: "6 × 6", accent: "amber", icon: "⚙", clues: 12, description: "Una llave inglesa desaparece justo antes de una carrera clandestina." },
+  { id: "hospital", title: "Guardia de medianoche", subtitle: "Hospital", difficulty: "Fácil", size: "6 × 6", accent: "cyan", icon: "✚", clues: 10, description: "Una receta intercambiada, cuatro turnos y un pasillo sin cámaras." },
+  { id: "halloween", title: "La vela que se apagó", subtitle: "Halloween", difficulty: "Avanzado", size: "9 × 9", accent: "violet", icon: "☾", clues: 18, description: "En la mansión, solo una persona estuvo a solas con la víctima." },
+];
 
-  // If theme is switchable in App.tsx, we can implement theme toggling like this:
-  // const { theme, toggleTheme } = useTheme();
+const defaultNames = ["Nora", "Bruno", "Celia", "Dante", "Eva", "Félix"];
 
+function SectionLabel({ children }: { children: React.ReactNode }) {
+  return <p className="eyebrow mb-3">{children}</p>;
+}
+
+function LogicGrid() {
+  const [marked, setMarked] = useState<Record<string, "yes" | "no" | undefined>>({});
+  const [revealed, setRevealed] = useState(false);
+  const cells = ["Nora", "Bruno", "Celia", "Dante", "Eva", "Félix"];
+  const clueRows = ["Llave inglesa", "Sala de pintura", "19:30", "Guantes", "Camioneta azul"];
+  const solved = Object.values(marked).filter(Boolean).length;
   return (
-    <div className="min-h-screen flex flex-col">
-      <main>
-        {/* Example: lucide-react for icons */}
-        <Loader2 className="animate-spin" />
-        Example Page
-        {/* Example: Streamdown for markdown rendering */}
-        <Streamdown>Any **markdown** content</Streamdown>
-        <Button variant="default">Example Button</Button>
-      </main>
+    <div className="space-y-5">
+      <div className="flex items-center justify-between gap-4">
+        <div><SectionLabel>Tablero de deducción</SectionLabel><h2 className="text-2xl font-semibold tracking-tight">Marca, cruza y descubre</h2></div>
+        <Badge variant="outline" className="border-emerald-200 bg-emerald-50 text-emerald-700"><Check className="mr-1 h-3.5 w-3.5" /> Solución única verificada</Badge>
+      </div>
+      <div className="grid gap-5 lg:grid-cols-[1.25fr_.75fr]">
+        <Card className="overflow-hidden border-stone-200 shadow-sm">
+          <CardHeader className="border-b border-stone-100 bg-stone-50/80 pb-4"><div className="flex items-center justify-between"><div><CardTitle className="text-base">¿Quién tenía qué?</CardTitle><CardDescription>Un toque marca • · dos toques marca ×</CardDescription></div><Badge variant="secondary">{solved}/12 marcas</Badge></div></CardHeader>
+          <CardContent className="overflow-x-auto p-0">
+            <table className="logic-table min-w-[620px]"><thead><tr><th className="w-40 text-left">Pistas</th>{cells.map((n) => <th key={n}>{n}</th>)}</tr></thead><tbody>{clueRows.map((clue) => <tr key={clue}><th>{clue}</th>{cells.map((name) => { const key = `${clue}-${name}`; const value = marked[key]; return <td key={name}><button aria-label={`${clue}, ${name}`} className={`logic-cell ${value === "yes" ? "is-yes" : value === "no" ? "is-no" : ""}`} onClick={() => setMarked((m) => ({ ...m, [key]: value === "yes" ? "no" : value === "no" ? undefined : "yes" }))}>{value === "yes" ? "●" : value === "no" ? "×" : ""}</button></td>; })}</tr>)}</tbody></table>
+          </CardContent>
+        </Card>
+        <Card className="border-stone-200 bg-[#202421] text-stone-100 shadow-sm"><CardHeader><SectionLabel>Pistas del caso</SectionLabel><CardTitle className="text-white">Lee como detective</CardTitle><CardDescription className="text-stone-400">Cada frase conserva su vínculo con la regla lógica.</CardDescription></CardHeader><CardContent className="space-y-3">{["Dante no estuvo en la sala de pintura.", "La persona de los guantes llegó después de Nora.", "Bruno estuvo junto a quien tenía la llave inglesa.", "La víctima estuvo a solas con el culpable.", "Celia no conducía la camioneta azul."].map((clue, i) => <div key={clue} className="clue-card"><span>{String(i + 1).padStart(2, "0")}</span><p>{clue}</p></div>)}<Separator className="bg-stone-700" /><div className="flex items-center justify-between pt-1"><span className="text-sm text-stone-400">¿Atascado?</span><Button size="sm" variant="outline" className="border-stone-600 bg-transparent text-stone-100 hover:bg-stone-700" onClick={() => toast("Pista desbloqueada: empieza por eliminar las parejas imposibles.")}><Lightbulb className="mr-2 h-4 w-4" />Pedir pista</Button></div><Button className="mt-2 w-full bg-[#f1b84b] text-[#202421] hover:bg-[#f7c965]" onClick={() => setRevealed(true)}><LockKeyhole className="mr-2 h-4 w-4" />{revealed ? "Solución revelada" : "Revelar solución"}</Button>{revealed && <div className="rounded-lg border border-[#f1b84b]/30 bg-[#f1b84b]/10 p-3 text-sm text-[#f8d98e]">El culpable es <strong>Bruno</strong>. La matriz ha sido validada antes de mostrarse.</div>}</CardContent></Card>
+      </div>
+      <div className="flex items-center gap-3 text-sm text-stone-500"><Progress value={Math.min(100, solved * 8)} className="h-2 flex-1" /><span>{Math.min(100, solved * 8)}% de progreso</span></div>
     </div>
   );
+}
+
+export default function Home() {
+  const [selected, setSelected] = useState("atelier");
+  const [view, setView] = useState<"library" | "create" | "play">("library");
+  const [names, setNames] = useState(defaultNames);
+  const [theme, setTheme] = useState("Taller mecánico");
+  const [tone, setTone] = useState("Misterioso, ligero");
+  const [story, setStory] = useState("Un objeto importante desaparece antes de una noche decisiva.");
+  const [generated, setGenerated] = useState(false);
+  const [query, setQuery] = useState("");
+  const [difficultyFilter, setDifficultyFilter] = useState("Todas");
+  const chosen = useMemo(() => templates.find((item) => item.id === selected) ?? templates[0], [selected]);
+  const visibleTemplates = templates.filter((item) => `${item.title} ${item.subtitle} ${item.description}`.toLowerCase().includes(query.toLowerCase()) && (difficultyFilter === "Todas" || item.difficulty === difficultyFilter));
+
+  const generate = () => { setGenerated(true); toast.success("Variación preparada para revisión", { description: "La lógica de la plantilla permanece intacta." }); };
+  return <div className="min-h-screen bg-[#f6f5f1] text-[#202421]">
+    <header className="border-b border-stone-200/80 bg-[#f6f5f1]/95 backdrop-blur"><div className="container flex h-20 items-center justify-between"><div className="flex items-center gap-3"><div className="brand-mark"><Fingerprint className="h-5 w-5" /></div><div><div className="font-display text-xl font-semibold leading-none">murdoku<span className="text-[#d68d22]">.</span></div><div className="mt-1 text-[10px] font-medium uppercase tracking-[.22em] text-stone-500">case studio</div></div></div><nav className="hidden items-center gap-8 text-sm font-medium text-stone-600 md:flex"><button className={view === "library" ? "text-[#202421]" : "hover:text-[#202421]"} onClick={() => setView("library")}>Biblioteca</button><button className={view === "create" ? "text-[#202421]" : "hover:text-[#202421]"} onClick={() => setView("create")}>Crear variación</button><button className={view === "play" ? "text-[#202421]" : "hover:text-[#202421]"} onClick={() => setView("play")}>Mis casos</button></nav><Button variant="outline" className="hidden border-stone-300 bg-transparent sm:flex" onClick={() => toast("El acceso estará disponible en la siguiente versión.")}><History className="mr-2 h-4 w-4" />Mi historial</Button></div></header>
+    <main className="container py-10 md:py-14">
+      {view === "library" && <><div className="hero-grid mb-12 grid items-end gap-8 lg:grid-cols-[1.3fr_.7fr]"><div><Badge className="mb-5 bg-[#202421] text-[#f7d58d] hover:bg-[#202421]"><Sparkles className="mr-2 h-3.5 w-3.5" /> Plantillas con lógica verificada</Badge><h1 className="max-w-3xl font-display text-5xl leading-[.98] tracking-[-.04em] md:text-7xl">Historias que se <em className="text-[#c57d20]">resuelven.</em></h1><p className="mt-6 max-w-xl text-lg leading-relaxed text-stone-600">Crea un misterio a tu medida sin perder lo más importante: una deducción limpia, pistas justas y una única respuesta posible.</p><div className="mt-8 flex flex-wrap gap-3"><Button className="bg-[#c57d20] text-white hover:bg-[#a96818]" onClick={() => setView("create")}><WandSparkles className="mr-2 h-4 w-4" />Crear mi Murdoku</Button><Button variant="outline" className="border-stone-300 bg-transparent" onClick={() => setView("play")}><Play className="mr-2 h-4 w-4" />Probar un caso</Button></div></div><div className="case-note rounded-2xl border border-stone-200 bg-white p-6 shadow-sm"><div className="flex items-center justify-between"><span className="eyebrow">Control de calidad</span><Check className="h-5 w-5 text-emerald-600" /></div><p className="mt-6 font-display text-3xl leading-tight">La narrativa cambia.<br /><span className="text-stone-400">La solución, no.</span></p><Separator className="my-6" /><div className="grid grid-cols-2 gap-4 text-sm"><div><div className="text-2xl font-semibold">100%</div><div className="text-stone-500">plantillas trazables</div></div><div><div className="text-2xl font-semibold">1</div><div className="text-stone-500">solución validada</div></div></div></div></div><div className="mb-5 flex flex-wrap items-end justify-between gap-4"><div><SectionLabel>Biblioteca de casos</SectionLabel><h2 className="text-2xl font-semibold tracking-tight">Elige un punto de partida</h2></div><div className="flex gap-2"><Input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Buscar caso..." className="h-9 w-40 bg-white sm:w-52" aria-label="Buscar en la biblioteca" /><select value={difficultyFilter} onChange={(e) => setDifficultyFilter(e.target.value)} className="h-9 rounded-md border border-stone-300 bg-white px-3 text-sm" aria-label="Filtrar por dificultad"><option>Todas</option><option>Fácil</option><option>Intermedio</option><option>Avanzado</option></select></div></div><div className="grid gap-5 md:grid-cols-3">{visibleTemplates.map((item) => <button key={item.id} onClick={() => { setSelected(item.id); setView("create"); }} className={`case-card text-left ${selected === item.id ? "is-selected" : ""}`}><div className={`case-art art-${item.accent}`}><span>{item.icon}</span><Badge className="absolute right-4 top-4 bg-white/80 text-stone-700 hover:bg-white">{item.size}</Badge></div><div className="p-5"><div className="eyebrow">{item.subtitle} · {item.difficulty}</div><h3 className="mt-2 font-display text-2xl">{item.title}</h3><p className="mt-2 text-sm leading-relaxed text-stone-500">{item.description}</p><div className="mt-5 flex items-center justify-between text-xs text-stone-500"><span>{item.clues} pistas enlazadas</span><ChevronRight className="h-4 w-4 text-[#c57d20]" /></div></div></button>)}</div></>}
+      {view === "create" && <div className="grid gap-8 lg:grid-cols-[.72fr_1.28fr]"><div><Button variant="ghost" className="mb-6 -ml-3 text-stone-500" onClick={() => setView("library")}><ChevronRight className="mr-2 h-4 w-4 rotate-180" />Volver a biblioteca</Button><SectionLabel>Nuevo caso · Paso 1 de 2</SectionLabel><h1 className="font-display text-5xl leading-none tracking-[-.04em]">Dale otra vida<br /><em className="text-[#c57d20]">al misterio.</em></h1><p className="mt-5 max-w-md leading-relaxed text-stone-600">La estructura de <strong>{chosen.title}</strong> quedará protegida. Tú decides cómo se ve, cómo suena y quién aparece.</p><div className="mt-8 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-800"><div className="flex items-center gap-2 font-semibold"><LockKeyhole className="h-4 w-4" /> Lógica protegida</div><p className="mt-2 leading-relaxed text-emerald-700">La cuadrícula, las relaciones y la solución única no se envían al redactor como campos editables.</p></div></div><Card className="border-stone-200 shadow-sm"><CardHeader><div className="flex items-center justify-between"><div><CardTitle>Cuestionario creativo</CardTitle><CardDescription>Cuatro decisiones para orientar la variación.</CardDescription></div><Badge variant="outline">Plantilla: {chosen.size}</Badge></div></CardHeader><CardContent className="space-y-6"><div><Label htmlFor="theme">Ambientación</Label><Input id="theme" value={theme} onChange={(e) => setTheme(e.target.value)} placeholder="Halloween, espacio, hospital..." className="mt-2" /></div><div><Label>Personajes</Label><div className="mt-2 grid grid-cols-2 gap-3 sm:grid-cols-3">{names.map((name, index) => <Input key={index} value={name} onChange={(e) => setNames((current) => current.map((n, i) => i === index ? e.target.value : n))} aria-label={`Personaje ${index + 1}`} />)}</div></div><div><Label htmlFor="tone">Tono narrativo</Label><Input id="tone" value={tone} onChange={(e) => setTone(e.target.value)} className="mt-2" /></div><div><Label htmlFor="story">Preferencia de historia</Label><Textarea id="story" value={story} onChange={(e) => setStory(e.target.value)} className="mt-2 min-h-24" /></div><div><Label htmlFor="difficulty">Dificultad</Label><select id="difficulty" value={chosen.difficulty} disabled className="mt-2 h-10 w-full rounded-md border border-stone-300 bg-stone-100 px-3 text-sm text-stone-600"><option>{chosen.difficulty}</option></select><p className="mt-2 text-sm text-stone-500">La dificultad se hereda y queda bloqueada para proteger la experiencia.</p></div><Button className="w-full bg-[#c57d20] text-white hover:bg-[#a96818]" onClick={generate}><WandSparkles className="mr-2 h-4 w-4" />Generar variación para revisar</Button>{generated && <div className="rounded-xl border border-[#e8c98d] bg-[#fff8e8] p-4"><div className="flex items-center gap-2 font-semibold"><Check className="h-4 w-4 text-emerald-700" /> Borrador listo</div><p className="mt-1 text-sm text-stone-600">{theme} · {tone} · {names.filter(Boolean).join(", ")}</p><Button variant="link" className="mt-2 h-auto p-0 text-[#a96818]" onClick={() => setView("play")}>Abrir revisión jugable <ChevronRight className="ml-1 h-4 w-4" /></Button></div>}</CardContent></Card></div>}
+      {view === "play" && <><div className="mb-8 flex flex-wrap items-end justify-between gap-4"><div><Button variant="ghost" className="mb-4 -ml-3 text-stone-500" onClick={() => setView("library")}><ChevronRight className="mr-2 h-4 w-4 rotate-180" />Biblioteca</Button><SectionLabel>{theme} · {chosen.title}</SectionLabel><h1 className="font-display text-5xl tracking-[-.04em]">La investigación comienza.</h1></div><div className="flex gap-2"><Button variant="outline" className="border-stone-300 bg-transparent" onClick={() => toast("Duplicado guardado en tu historial.")}><Copy className="mr-2 h-4 w-4" />Duplicar</Button><Button variant="outline" className="border-stone-300 bg-transparent" onClick={() => toast("Progreso reiniciado.")}><RotateCcw className="mr-2 h-4 w-4" />Reiniciar</Button></div></div><Tabs defaultValue="play"><TabsList className="mb-6 bg-stone-200/70"><TabsTrigger value="play"><Grid3X3 className="mr-2 h-4 w-4" />Jugar</TabsTrigger><TabsTrigger value="review"><BookOpen className="mr-2 h-4 w-4" />Ficha del caso</TabsTrigger></TabsList><TabsContent value="play"><LogicGrid /></TabsContent><TabsContent value="review"><Card className="max-w-3xl border-stone-200"><CardHeader><CardTitle>Ficha de trazabilidad</CardTitle><CardDescription>La capa narrativa está separada de la lógica estructural.</CardDescription></CardHeader><CardContent className="space-y-4 text-sm leading-relaxed text-stone-600"><p>Esta variación usa la plantilla <strong>{chosen.title}</strong>, con {chosen.clues} pistas enlazadas y una solución única comprobada antes de mostrarse.</p><div className="grid gap-3 sm:grid-cols-3"><div className="rounded-lg bg-stone-100 p-3"><div className="eyebrow">Estructura</div><div className="mt-1 font-semibold text-stone-800">Bloqueada</div></div><div className="rounded-lg bg-stone-100 p-3"><div className="eyebrow">Narrativa</div><div className="mt-1 font-semibold text-stone-800">Personalizada</div></div><div className="rounded-lg bg-stone-100 p-3"><div className="eyebrow">Validación</div><div className="mt-1 font-semibold text-emerald-700">Aprobada</div></div></div></CardContent></Card></TabsContent></Tabs></>}
+    </main><footer className="container border-t border-stone-200 py-8 text-xs text-stone-500"><div className="flex flex-wrap justify-between gap-3"><span>murdoku.case studio</span><span>Diseñado para pensar despacio.</span></div></footer>
+  </div>;
 }

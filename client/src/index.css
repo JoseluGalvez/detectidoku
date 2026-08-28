@@ -1,177 +1,58 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600;1,700&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
 
-@custom-variant dark (&:is(.dark *));
-
 @theme inline {
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
-  --color-chart-1: var(--chart-1);
-  --color-chart-2: var(--chart-2);
-  --color-chart-3: var(--chart-3);
-  --color-chart-4: var(--chart-4);
-  --color-chart-5: var(--chart-5);
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
+  --font-sans: 'DM Sans', sans-serif;
+  --font-display: 'Playfair Display', serif;
+  --font-mono: 'DM Mono', monospace;
+  --color-background: #f6f5f1;
+  --color-foreground: #202421;
+  --color-card: #ffffff;
+  --color-card-foreground: #202421;
+  --color-popover: #ffffff;
+  --color-popover-foreground: #202421;
+  --color-primary: #c57d20;
+  --color-primary-foreground: #ffffff;
+  --color-secondary: #eceae4;
+  --color-secondary-foreground: #202421;
+  --color-muted: #eeede8;
+  --color-muted-foreground: #706f69;
+  --color-accent: #f1b84b;
+  --color-accent-foreground: #202421;
+  --color-border: #deddd6;
+  --color-input: #deddd6;
+  --color-ring: #c57d20;
+  --radius: .75rem;
 }
 
-:root {
-  --primary: var(--color-blue-700);
-  --primary-foreground: var(--color-blue-50);
-  --sidebar-primary: var(--color-blue-600);
-  --sidebar-primary-foreground: var(--color-blue-50);
-  --chart-1: var(--color-blue-300);
-  --chart-2: var(--color-blue-500);
-  --chart-3: var(--color-blue-600);
-  --chart-4: var(--color-blue-700);
-  --chart-5: var(--color-blue-800);
-  --radius: 0.65rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.235 0.015 65);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.235 0.015 65);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.235 0.015 65);
-  --secondary: oklch(0.98 0.001 286.375);
-  --secondary-foreground: oklch(0.4 0.015 65);
-  --muted: oklch(0.967 0.001 286.375);
-  --muted-foreground: oklch(0.552 0.016 285.938);
-  --accent: oklch(0.967 0.001 286.375);
-  --accent-foreground: oklch(0.141 0.005 285.823);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.985 0 0);
-  --border: oklch(0.92 0.004 286.32);
-  --input: oklch(0.92 0.004 286.32);
-  --ring: oklch(0.623 0.214 259.815);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.235 0.015 65);
-  --sidebar-accent: oklch(0.967 0.001 286.375);
-  --sidebar-accent-foreground: oklch(0.141 0.005 285.823);
-  --sidebar-border: oklch(0.92 0.004 286.32);
-  --sidebar-ring: oklch(0.623 0.214 259.815);
-}
-
-.dark {
-  --primary: var(--color-blue-700);
-  --primary-foreground: var(--color-blue-50);
-  --sidebar-primary: var(--color-blue-500);
-  --sidebar-primary-foreground: var(--color-blue-50);
-  --background: oklch(0.141 0.005 285.823);
-  --foreground: oklch(0.85 0.005 65);
-  --card: oklch(0.21 0.006 285.885);
-  --card-foreground: oklch(0.85 0.005 65);
-  --popover: oklch(0.21 0.006 285.885);
-  --popover-foreground: oklch(0.85 0.005 65);
-  --secondary: oklch(0.24 0.006 286.033);
-  --secondary-foreground: oklch(0.7 0.005 65);
-  --muted: oklch(0.274 0.006 286.033);
-  --muted-foreground: oklch(0.705 0.015 286.067);
-  --accent: oklch(0.274 0.006 286.033);
-  --accent-foreground:  oklch(0.92 0.005 65);
-  --destructive: oklch(0.704 0.191 22.216);
-  --destructive-foreground: oklch(0.985 0 0);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.488 0.243 264.376);
-  --chart-1: var(--color-blue-300);
-  --chart-2: var(--color-blue-500);
-  --chart-3: var(--color-blue-600);
-  --chart-4: var(--color-blue-700);
-  --chart-5: var(--color-blue-800);
-  --sidebar: oklch(0.21 0.006 285.885);
-  --sidebar-foreground: oklch(0.85 0.005 65);
-  --sidebar-accent: oklch(0.274 0.006 286.033);
-  --sidebar-accent-foreground:  oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.488 0.243 264.376);
-}
-
-@layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
-  button:not(:disabled),
-  [role="button"]:not([aria-disabled="true"]),
-  [type="button"]:not(:disabled),
-  [type="submit"]:not(:disabled),
-  [type="reset"]:not(:disabled),
-  a[href],
-  select:not(:disabled),
-  input[type="checkbox"]:not(:disabled),
-  input[type="radio"]:not(:disabled) {
-    @apply cursor-pointer;
-  }
-}
-
-@layer components {
-  /**
-   * Custom container utility that centers content and adds responsive padding.
-   *
-   * This overrides Tailwind's default container behavior to:
-   * - Auto-center content (mx-auto)
-   * - Add responsive horizontal padding
-   * - Set max-width for large screens
-   *
-   * Usage: <div className="container">...</div>
-   *
-   * For custom widths, use max-w-* utilities directly:
-   * <div className="max-w-6xl mx-auto px-4">...</div>
-   */
-  .container {
-    width: 100%;
-    margin-left: auto;
-    margin-right: auto;
-    padding-left: 1rem; /* 16px - mobile padding */
-    padding-right: 1rem;
-  }
-
-  .flex {
-    min-height: 0;
-    min-width: 0;
-  }
-
-  @media (min-width: 640px) {
-    .container {
-      padding-left: 1.5rem; /* 24px - tablet padding */
-      padding-right: 1.5rem;
-    }
-  }
-
-  @media (min-width: 1024px) {
-    .container {
-      padding-left: 2rem; /* 32px - desktop padding */
-      padding-right: 2rem;
-      max-width: 1280px; /* Standard content width */
-    }
-  }
-}
+:root { font-family: 'DM Sans', sans-serif; color: #202421; background: #f6f5f1; font-synthesis: none; }
+* { border-color: #deddd6; }
+body { margin: 0; min-width: 320px; background: #f6f5f1; }
+button, input, textarea { font: inherit; }
+.font-display { font-family: 'Playfair Display', serif; }
+.eyebrow { font-family: 'DM Mono', monospace; font-size: .65rem; line-height: 1; letter-spacing: .18em; text-transform: uppercase; color: #8a887f; }
+.brand-mark { display: grid; height: 34px; width: 34px; place-items: center; border-radius: 10px; color: #f7d58d; background: #202421; transform: rotate(-7deg); }
+.hero-grid { position: relative; }
+.hero-grid::before { position: absolute; z-index: 0; top: -32px; left: -48px; width: 260px; height: 160px; content: ''; background-image: radial-gradient(#dfddd6 1px, transparent 1px); background-size: 12px 12px; opacity: .65; pointer-events: none; }
+.hero-grid > * { position: relative; z-index: 1; }
+.case-note { background-image: linear-gradient(135deg, rgba(255,255,255,.96), rgba(250,248,240,.96)); }
+.case-card { overflow: hidden; border: 1px solid #deddd6; border-radius: 16px; background: white; box-shadow: 0 2px 0 rgba(32,36,33,.02); transition: transform 180ms cubic-bezier(.23,1,.32,1), box-shadow 180ms ease, border-color 180ms ease; }
+.case-card:hover, .case-card.is-selected { border-color: #cfa15f; box-shadow: 0 12px 28px rgba(55,47,30,.09); transform: translateY(-3px); }
+.case-art { position: relative; display: flex; height: 145px; align-items: center; justify-content: center; overflow: hidden; }
+.case-art::before, .case-art::after { position: absolute; content: ''; border: 1px solid rgba(32,36,33,.13); border-radius: 50%; }
+.case-art::before { height: 190px; width: 190px; }
+.case-art::after { height: 120px; width: 120px; }
+.case-art span { position: relative; z-index: 1; font-size: 4rem; filter: grayscale(.2); }
+.art-amber { background: #e8c98d; } .art-cyan { background: #a8d4d0; } .art-violet { background: #c8b6d9; }
+.logic-table { width: 100%; border-collapse: collapse; font-size: .8rem; }
+.logic-table th, .logic-table td { border-bottom: 1px solid #ecebe6; border-right: 1px solid #ecebe6; padding: .7rem .55rem; text-align: center; }
+.logic-table thead th { background: #faf9f6; color: #77746b; font-family: 'DM Mono', monospace; font-size: .64rem; font-weight: 500; text-transform: uppercase; letter-spacing: .08em; }
+.logic-table tbody th { background: #fff; color: #5c5a54; font-weight: 500; text-align: left; }
+.logic-cell { display: grid; height: 30px; width: 30px; margin: auto; place-items: center; border-radius: 50%; color: #9a968b; transition: background 120ms ease, color 120ms ease, transform 120ms ease; }
+.logic-cell:hover { background: #f3f0e8; transform: scale(1.08); }
+.logic-cell.is-yes { color: #16735a; background: #dff2e9; } .logic-cell.is-no { color: #b95342; background: #fae8e4; }
+.clue-card { display: grid; grid-template-columns: 30px 1fr; gap: 10px; align-items: start; padding: 11px 0; border-bottom: 1px solid #3b403c; }
+.clue-card span { color: #f1b84b; font-family: 'DM Mono', monospace; font-size: .7rem; } .clue-card p { margin: 0; color: #e0e1db; font-size: .85rem; line-height: 1.45; }
+@media (max-width: 640px) { .container { padding-left: 1.25rem; padding-right: 1.25rem; } .hero-grid h1 { font-size: 3.6rem; } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; } }
