@@ -1,0 +1,1 @@
+ALTER TABLE `daily_results` ADD `seed` varchar(128) NOT NULL;

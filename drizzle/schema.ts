@@ -1,7 +1,7 @@
 import { int, json, mysqlEnum, mysqlTable, text, timestamp, varchar } from "drizzle-orm/mysql-core";
 
 export const users = mysqlTable("users", {
-  id: int("id").autoincrement().primaryKey(), openId: varchar("openId", { length: 64 }).notNull().unique(), name: text("name"), email: varchar("email", { length: 320 }), loginMethod: varchar("loginMethod", { length: 64 }), role: mysqlEnum("role", ["user", "admin"]).default("user").notNull(), createdAt: timestamp("createdAt").defaultNow().notNull(), updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(), lastSignedIn: timestamp("lastSignedIn").defaultNow().notNull(),
+  id: int("id").autoincrement().primaryKey(), openId: varchar("openId", { length: 64 }).notNull().unique(), name: text("name"), email: varchar("email", { length: 320 }), loginMethod: varchar("loginMethod", { length: 64 }), role: mysqlEnum("role", ["user", "admin"]).default("user").notNull(), createdAt: timestamp("createdAt").defaultNow().notNull(), updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(), lastSignedIn: timestamp("lastSignedIn").defaultNow().notNull(), dailyWins: int("dailyWins").default(0).notNull(), achievementPoints: int("achievementPoints").default(0).notNull(),
 });
 
 export const sourceDocuments = mysqlTable("source_documents", {
@@ -21,7 +21,7 @@ export const dailyChallenges = mysqlTable("daily_challenges", {
 });
 
 export const dailyResults = mysqlTable("daily_results", {
-  id: int("id").autoincrement().primaryKey(), challengeDate: varchar("challengeDate", { length: 10 }).notNull(), userId: int("userId").notNull(), displayName: varchar("displayName", { length: 120 }).notNull(), elapsedSeconds: int("elapsedSeconds").notNull(), hintsUsed: int("hintsUsed").default(0).notNull(), completedAt: timestamp("completedAt").defaultNow().notNull(),
+  id: int("id").autoincrement().primaryKey(), challengeDate: varchar("challengeDate", { length: 10 }).notNull(), seed: varchar("seed", { length: 128 }).notNull(), userId: int("userId").notNull(), displayName: varchar("displayName", { length: 120 }).notNull(), elapsedSeconds: int("elapsedSeconds").notNull(), hintsUsed: int("hintsUsed").default(0).notNull(), completedAt: timestamp("completedAt").defaultNow().notNull(),
 });
 
 export const events = mysqlTable("murdoku_events", {

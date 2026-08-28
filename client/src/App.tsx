@@ -5,6 +5,7 @@ import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
+import QualityReport from "./pages/QualityReport";
 import EventView from "./pages/EventView";
 import Profile from "./pages/Profile";
 
@@ -14,7 +15,8 @@ function Router() {
     <Switch>
       <Route path={"/"} component={Home} />
       <Route path={"/event/:inviteCode"} component={EventView} />
-      <Route path={"/profile"} component={Profile} />
+      <Route path="/profile" component={Profile} />
+      <Route path="/quality" component={QualityReport} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />

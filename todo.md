@@ -125,3 +125,39 @@
 - [x] Crear catálogo inicial de estilos desbloqueables: cluedo, simpsons y kawaii, con estados locked/unlocked.
 - [x] Añadir pruebas de finalización, historial, eventos directos y desbloqueos.
 - [x] Verificar visualmente juego completado, perfil, estilos y evento directo en escritorio y móvil.
+
+## Ranking histórico, logros persistentes y calidad automática
+
+- [x] Extraer de Murdokeando.md un checklist verificable de requisitos de alta calidad.
+- [x] Guardar el checklist y sus criterios en una especificación reutilizable del proyecto.
+- [x] Añadir ranking histórico por semilla, ordenado por tiempo y pistas utilizadas.
+- [x] Sustituir desbloqueos locales por logros persistentes asociados al usuario en la base de datos.
+- [x] Crear reglas de desbloqueo idempotentes y resistentes a manipulación del cliente.
+- [x] Evaluar automáticamente cada Murdoku nuevo y mostrar requisitos cumplidos y no cumplidos.
+- [x] Bloquear el guardado o marcar para revisión los Murdokus que incumplan requisitos críticos.
+- [x] Añadir pruebas de ranking histórico, logros persistentes y checklist de calidad.
+- [x] Verificar visualmente perfil, ranking histórico e informe de calidad en escritorio y móvil.
+
+## Correcciones pendientes detectadas
+
+- [x] Persistir victorias/progreso de logros en base de datos y eliminar la dependencia de localStorage para desbloqueos.
+- [x] Validar server-side la elegibilidad de cada estilo antes de aceptar el desbloqueo.
+- [x] Añadir pruebas tRPC/DB del ranking histórico por semilla y de la seguridad de logros.
+- [x] Repetir la verificación visual específica del ranking histórico y del informe de calidad en escritorio y móvil.
+
+## Últimos huecos de calidad
+
+- [x] Restringir profile.unlockStyle para que solo conceda estilos elegibles por victorias persistidas.
+- [x] Probar ranking histórico con datos reales o un helper determinista de filtrado y ordenación por semilla.
+- [x] Probar elegibilidad e idempotencia de desbloqueos con usuario autenticado.
+- [x] Capturar explícitamente la pantalla de creación/revisión con qualityReport en escritorio y móvil.
+
+## Verificación final pendiente
+
+- [x] Probar con usuario autenticado que desbloquear dos veces el mismo estilo es idempotente.
+- [x] Capturar la pantalla de creación/revisión con qualityReport visible en escritorio y móvil.
+
+## Huecos reales de verificación
+
+- [x] Probar un desbloqueo elegible exitoso repetido y verificar idempotencia sin duplicados.
+- [x] Capturar la pantalla real MurdokuReview con qualityReport visible en escritorio y móvil.

@@ -2,6 +2,9 @@ import { generateDeterministicMurdoku, type InterviewConfig, type GeneratedMurdo
 
 export function utcChallengeDate(now = new Date()) { return now.toISOString().slice(0, 10); }
 export function seedForDate(date: string) { return `murdoku-${date}`; }
+export type RankedResult = { seed: string; elapsedSeconds: number; hintsUsed: number; displayName: string };
+export function rankResultsBySeed(results: RankedResult[], seed: string) { return results.filter((result) => result.seed === seed).sort((a, b) => a.elapsedSeconds - b.elapsedSeconds || a.hintsUsed - b.hintsUsed); }
+
 export function challengeFromSeed(seed: string): GeneratedMurdoku {
   let hash = 0; for (const char of seed) hash = (hash * 31 + char.charCodeAt(0)) >>> 0;
   const themes = ["Taller mecánico", "Hospital", "Halloween", "Observatorio", "Hotel"], theme = themes[hash % themes.length];
