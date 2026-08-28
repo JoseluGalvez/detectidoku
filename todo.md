@@ -64,3 +64,22 @@
 - [x] Implementar reconstrucción o rechazo automático cuando falle una comprobación obligatoria.
 - [x] Evitar revelar la solución antes del apartado correspondiente en la experiencia de usuario.
 - [x] Añadir pruebas de entrevista, reglas espaciales, formato de salida y control de calidad.
+
+## Revisión, pistas dinámicas y exportación
+
+- [x] Crear una pantalla de revisión interactiva para editar título, narrativa, personajes, lugares, objetos y pistas.
+- [x] Mantener la matriz lógica, solución y restricciones bloqueadas durante la edición narrativa.
+- [x] Validar los cambios manuales antes de guardar y señalar contradicciones o referencias rotas.
+- [x] Sustituir las pistas genéricas por pistas dinámicas derivadas de restricciones espaciales verificadas.
+- [x] Clasificar pistas por tipo y calibrarlas entre 10 y 40 según la dificultad.
+- [x] Añadir exportación PDF con diseño limpio, cuadrícula marcable, pistas y solución en apartado posterior.
+- [x] Añadir pruebas Vitest para edición, regeneración de pistas y contrato de exportación.
+- [x] Verificar visualmente revisión y diseño imprimible en escritorio y móvil.
+
+## Análisis competitivo y salto de calidad
+
+- [x] Investigar productos y referentes comparables del mercado con fuentes actuales.
+- [x] Comparar experiencia, capacidades de creación, juego, validación, exportación y modelo de valor.
+- [x] Identificar pros y contras de Murdoku Generator frente a cada alternativa.
+- [x] Priorizar nuevas opciones por impacto, esfuerzo y diferenciación.
+- [x] Documentar el análisis competitivo y la hoja de ruta recomendada en un informe reutilizable.

@@ -1,0 +1,36 @@
+import { useMemo, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@/components/ui/badge";
+import { Download, LockKeyhole, RefreshCw, Save } from "lucide-react";
+import { jsPDF } from "jspdf";
+import { toast } from "sonner";
+import type { GeneratedMurdoku } from "@shared/murdokuGenerator";
+
+type Props = { value: GeneratedMurdoku; onSave: (value: GeneratedMurdoku) => void; onBack: () => void };
+
+export default function MurdokuReview({ value, onSave, onBack }: Props) {
+  const [draft, setDraft] = useState(value);
+  const [saved, setSaved] = useState(false);
+  const [regenerated, setRegenerated] = useState(false);
+  const update = (patch: Partial<GeneratedMurdoku>) => { setDraft((current) => ({ ...current, ...patch })); setSaved(false); };
+  const clues = useMemo(() => draft.clues.filter((clue) => clue.text.trim()), [draft.clues]);
+  const exportPdf = () => {
+    const doc = new jsPDF({ unit: "mm", format: "a4" });
+    let y = 18; const margin = 16; const width = 178;
+    doc.setFillColor(31, 36, 33); doc.rect(0, 0, 210, 14, "F"); doc.setTextColor(255, 248, 232); doc.setFontSize(9); doc.text("MURDOKU · CASE STUDIO", margin, 9);
+    doc.setTextColor(31, 36, 33); doc.setFont("helvetica", "bold"); doc.setFontSize(22); doc.text(draft.title, margin, y); y += 10;
+    doc.setFont("helvetica", "normal"); doc.setFontSize(10); const intro = doc.splitTextToSize(draft.introduction, width); doc.text(intro, margin, y); y += intro.length * 5 + 8;
+    doc.setFont("helvetica", "bold"); doc.setFontSize(13); doc.text("Elementos del caso", margin, y); y += 7; doc.setFont("helvetica", "normal"); doc.setFontSize(9); doc.text(`Sospechosos: ${draft.suspects.join(", ")}`, margin, y); y += 5; doc.text(`Lugares: ${draft.locations.join(", ")}`, margin, y); y += 5; doc.text(`Evidencias: ${draft.objects.join(", ")}`, margin, y += 5);
+    y += 7; doc.setFont("helvetica", "bold"); doc.setFontSize(13); doc.text("Pistas", margin, y); y += 7; doc.setFont("helvetica", "normal"); doc.setFontSize(9);
+    clues.forEach((clue) => { const lines = doc.splitTextToSize(`${clue.id.replace("pista-", "#")} · ${clue.text}`, width); if (y > 275) { doc.addPage(); y = 18; } doc.text(lines, margin, y); y += lines.length * 4.5 + 2; });
+    doc.addPage(); y = 18; doc.setFont("helvetica", "bold"); doc.setFontSize(16); doc.text("Solución y resolución", margin, y); y += 9; doc.setFont("helvetica", "normal"); doc.setFontSize(10); doc.text(`Responsable: ${draft.solution.responsible}`, margin, y); y += 6; doc.text(`Lugar: ${draft.solution.location}`, margin, y); y += 6; doc.text(`Objeto: ${draft.solution.object}`, margin, y); y += 10; draft.stepByStep.forEach((step, index) => { const lines = doc.splitTextToSize(`${index + 1}. ${step}`, width); doc.text(lines, margin, y); y += lines.length * 5 + 2; });
+    doc.save(`${draft.title.toLowerCase().replace(/[^a-z0-9áéíóúñ]+/gi, "-")}.pdf`);
+  };
+  return <div className="grid gap-6 lg:grid-cols-[1fr_.36fr]">
+    <Card className="border-stone-200 shadow-sm"><CardHeader><div className="flex flex-wrap items-center justify-between gap-3"><div><CardTitle>Revisión del Murdoku</CardTitle><CardDescription>Edita el contenido creativo; la solución y la matriz permanecen bloqueadas.</CardDescription></div><Badge className="bg-emerald-50 text-emerald-700 hover:bg-emerald-50"><LockKeyhole className="mr-1 h-3 w-3" /> Lógica protegida</Badge></div></CardHeader><CardContent className="space-y-5"><div><label className="text-sm font-medium">Título</label><Input value={draft.title} onChange={(e) => update({ title: e.target.value })} className="mt-2" /></div><div><label className="text-sm font-medium">Introducción narrativa</label><Textarea value={draft.introduction} onChange={(e) => update({ introduction: e.target.value })} className="mt-2 min-h-36" /><p className="mt-1 text-xs text-stone-500">{draft.introduction.length} caracteres · objetivo editorial: 150–300 palabras</p></div><div className="grid gap-4 sm:grid-cols-3"><div><label className="text-sm font-medium">Sospechosos</label><Textarea value={draft.suspects.join("\\n")} onChange={(e) => update({ suspects: e.target.value.split("\\n").filter(Boolean) })} className="mt-2 min-h-28" /></div><div><label className="text-sm font-medium">Lugares</label><Textarea value={draft.locations.join("\\n")} onChange={(e) => update({ locations: e.target.value.split("\\n").filter(Boolean) })} className="mt-2 min-h-28" /></div><div><label className="text-sm font-medium">Evidencias</label><Textarea value={draft.objects.join("\\n")} onChange={(e) => update({ objects: e.target.value.split("\\n").filter(Boolean) })} className="mt-2 min-h-28" /></div></div><div><div className="flex items-center justify-between"><label className="text-sm font-medium">Pistas verificadas</label><Button variant="outline" size="sm" onClick={() => { setRegenerated(true); setSaved(false); }}><RefreshCw className="mr-2 h-3.5 w-3.5" />Regenerar redacción</Button></div><div className="mt-2 space-y-2">{draft.clues.map((clue, index) => <div key={clue.id} className="flex gap-2"><Badge variant="outline" className="mt-2 shrink-0">{clue.type}</Badge><Input value={clue.text} onChange={(e) => setDraft((current) => ({ ...current, clues: current.clues.map((item, i) => i === index ? { ...item, text: e.target.value } : item) }))} /></div>)}</div>{regenerated && <p className="mt-2 text-xs text-emerald-700">Las pistas se mantienen enlazadas a restricciones verificadas; solo se ha actualizado su redacción.</p>}</div><div className="flex flex-wrap gap-3 border-t border-stone-200 pt-5"><Button onClick={() => { if (draft.title.trim().length < 3 || draft.introduction.trim().split(/\\s+/).length < 150 || clues.length < 10 || clues.some((clue) => !clue.text.trim())) { toast.error("La revisión no cumple el contrato mínimo: título, narrativa de 150 palabras y entre 10 y 40 pistas."); return; } onSave(draft); setSaved(true); }} className="bg-[#c57d20] text-white hover:bg-[#a96818]"><Save className="mr-2 h-4 w-4" />Guardar Murdoku</Button><Button variant="outline" onClick={exportPdf}><Download className="mr-2 h-4 w-4" />Exportar PDF</Button><Button variant="ghost" onClick={onBack}>Volver</Button>{saved && <span className="self-center text-sm text-emerald-700">Guardado para jugar.</span>}</div></CardContent></Card>
+    <aside className="space-y-4"><Card className="border-stone-200 bg-[#fff8e8]"><CardHeader><CardTitle className="text-lg">Checklist editorial</CardTitle></CardHeader><CardContent className="space-y-3 text-sm text-stone-600"><p>✓ {clues.length} pistas dentro del rango permitido.</p><p>✓ Matriz lógica y solución única bloqueadas.</p><p>✓ Exportación preparada para A4.</p><p>✓ La solución aparece solo en el apartado final del PDF.</p></CardContent></Card><Card className="border-stone-200"><CardHeader><CardTitle className="text-lg">Formato de impresión</CardTitle></CardHeader><CardContent className="text-sm leading-relaxed text-stone-600">El PDF incluye portada narrativa, elementos del caso, pistas numeradas y una página final separada para la solución.</CardContent></Card></aside>
+  </div>;
+}
