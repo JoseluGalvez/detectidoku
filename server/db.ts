@@ -1,6 +1,6 @@
-import { and, desc, eq } from "drizzle-orm";
+import { and, asc, desc, eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { dailyChallenges, eventParticipants, events, generatedCases, InsertUser, murdokuTemplates, users } from "../drizzle/schema";
+import { dailyChallenges, dailyResults, eventParticipants, events, generatedCases, InsertUser, murdokuTemplates, users } from "../drizzle/schema";
 import { ENV } from "./_core/env";
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -26,4 +26,6 @@ export async function getMurdokuEvent(inviteCode: string) { const db = await get
 export async function getMurdokuEventById(eventId: number) { const db = await getDb(); if (!db) return undefined; return (await db.select().from(events).where(eq(events.id, eventId)).limit(1))[0]; }
 export async function finishMurdokuEvent(eventId: number) { const db = await getDb(); if (!db) throw new Error("database_unavailable"); await db.update(events).set({ status: "finished" }).where(eq(events.id, eventId)); }
 export async function listEventParticipants(eventId: number) { const db = await getDb(); if (!db) return []; return db.select().from(eventParticipants).where(eq(eventParticipants.eventId, eventId)).orderBy(desc(eventParticipants.updatedAt)).limit(100); }
-export async function upsertEventParticipant(input: typeof eventParticipants.$inferInsert) { const db = await getDb(); if (!db) throw new Error("database_unavailable"); const existing = (await db.select().from(eventParticipants).where(and(eq(eventParticipants.eventId, input.eventId), eq(eventParticipants.userId, input.userId))).limit(1))[0]; if (existing) { await db.update(eventParticipants).set({ displayName: input.displayName, progressJson: input.progressJson, completedAt: input.completedAt }).where(eq(eventParticipants.id, existing.id)); return existing.id; } const result = await db.insert(eventParticipants).values(input); return result[0].insertId; }
+export async function upsertEventParticipant(input: typeof eventParticipants.$inferInsert) { const db = await getDb(); if (!db) throw new Error("database_unavailable"); const existing = (await db.select().from(eventParticipants).where(and(eq(eventParticipants.eventId, input.eventId), eq(eventParticipants.userId, input.userId))).limit(1))[0]; if (existing) { await db.update(eventParticipants).set({ displayName: input.displayName, progressJson: input.progressJson, elapsedSeconds: input.elapsedSeconds ?? existing.elapsedSeconds, hintsUsed: input.hintsUsed ?? existing.hintsUsed, completedAt: input.completedAt }).where(eq(eventParticipants.id, existing.id)); return existing.id; } const result = await db.insert(eventParticipants).values(input); return result[0].insertId; }
+export async function listDailyResults(challengeDate: string) { const db = await getDb(); if (!db) return []; return db.select().from(dailyResults).where(eq(dailyResults.challengeDate, challengeDate)).orderBy(asc(dailyResults.elapsedSeconds), asc(dailyResults.hintsUsed)).limit(100); }
+export async function saveDailyResult(input: typeof dailyResults.$inferInsert) { const db = await getDb(); if (!db) throw new Error("database_unavailable"); await db.insert(dailyResults).values(input); return input; }

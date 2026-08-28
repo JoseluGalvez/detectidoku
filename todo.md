@@ -103,3 +103,14 @@
 - [x] Hacer que el inspector muestre referencias, restricción formal, candidatos eliminados y deducción concreta por pista.
 - [x] Añadir pruebas de permisos de eventos, sincronización, solver e inspector.
 - [x] Verificar visualmente la vista de juego con inspector en escritorio y móvil.
+
+## Revisión, clasificación y eventos por enlace
+
+- [x] Convertir la revisión del Murdoku generado en una pantalla previa al guardado con edición manual y validación.
+- [x] Sustituir cualquier pista de ejemplo restante por pistas dinámicas derivadas de restricciones espaciales verificadas.
+- [x] Añadir botón de exportación PDF con maquetación imprimible, solución separada y cuadrícula marcable.
+- [x] Persistir resultados diarios con tiempo empleado y pistas utilizadas sin exponer la solución.
+- [x] Crear tabla de clasificación diaria ordenable y segura por reto/semilla.
+- [x] Crear ruta o vista específica de evento con enlace profundo y unión directa.
+- [x] Añadir pruebas de revisión, clasificación, exportación y acceso por enlace.
+- [x] Verificar visualmente revisión, ranking y evento en escritorio y móvil.

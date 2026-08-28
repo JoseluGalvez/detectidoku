@@ -20,12 +20,16 @@ export const dailyChallenges = mysqlTable("daily_challenges", {
   id: int("id").autoincrement().primaryKey(), challengeDate: varchar("challengeDate", { length: 10 }).notNull().unique(), seed: varchar("seed", { length: 128 }).notNull(), caseSnapshotJson: json("caseSnapshotJson").notNull(), createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
+export const dailyResults = mysqlTable("daily_results", {
+  id: int("id").autoincrement().primaryKey(), challengeDate: varchar("challengeDate", { length: 10 }).notNull(), userId: int("userId").notNull(), displayName: varchar("displayName", { length: 120 }).notNull(), elapsedSeconds: int("elapsedSeconds").notNull(), hintsUsed: int("hintsUsed").default(0).notNull(), completedAt: timestamp("completedAt").defaultNow().notNull(),
+});
+
 export const events = mysqlTable("murdoku_events", {
   id: int("id").autoincrement().primaryKey(), inviteCode: varchar("inviteCode", { length: 32 }).notNull().unique(), hostUserId: int("hostUserId").notNull(), caseSnapshotJson: json("caseSnapshotJson").notNull(), durationSeconds: int("durationSeconds").notNull(), startsAt: timestamp("startsAt").notNull(), endsAt: timestamp("endsAt").notNull(), status: mysqlEnum("status", ["waiting", "live", "finished"]).default("waiting").notNull(), createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
 export const eventParticipants = mysqlTable("event_participants", {
-  id: int("id").autoincrement().primaryKey(), eventId: int("eventId").notNull(), userId: int("userId").notNull(), displayName: varchar("displayName", { length: 120 }).notNull(), progressJson: json("progressJson").notNull(), joinedAt: timestamp("joinedAt").defaultNow().notNull(), completedAt: timestamp("completedAt"), updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  id: int("id").autoincrement().primaryKey(), eventId: int("eventId").notNull(), userId: int("userId").notNull(), displayName: varchar("displayName", { length: 120 }).notNull(), progressJson: json("progressJson").notNull(), elapsedSeconds: int("elapsedSeconds").default(0).notNull(), hintsUsed: int("hintsUsed").default(0).notNull(), joinedAt: timestamp("joinedAt").defaultNow().notNull(), completedAt: timestamp("completedAt"), updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
 
 export const gameSessions = mysqlTable("game_sessions", {
