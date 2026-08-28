@@ -39,3 +39,36 @@ export function validateMurdoku(template: MurdokuTemplate): LogicValidation {
 }
 
 export function canChangeNarrativeOnly(before: CandidateMatrix, after: CandidateMatrix) { return JSON.stringify(before) === JSON.stringify(after); }
+
+export type SpatialCell = { row: number; col: number; roomId: string; objectId?: string; wallNorth?: boolean; wallSouth?: boolean; wallEast?: boolean; wallWest?: boolean };
+export type SpatialPosition = { entityId: string; row: number; col: number; roomId: string };
+
+export function isOrthogonallyBeside(a: SpatialPosition, b: SpatialPosition, cells: SpatialCell[]) {
+  if (a.roomId !== b.roomId) return false;
+  const distance = Math.abs(a.row - b.row) + Math.abs(a.col - b.col);
+  if (distance !== 1) return false;
+  const from = cells.find((cell) => cell.row === a.row && cell.col === a.col);
+  const to = cells.find((cell) => cell.row === b.row && cell.col === b.col);
+  if (!from || !to) return false;
+  if (b.row < a.row && from.wallNorth) return false;
+  if (b.row > a.row && from.wallSouth) return false;
+  if (b.col < a.col && from.wallWest) return false;
+  if (b.col > a.col && from.wallEast) return false;
+  return true;
+}
+
+export function isSouthOf(a: SpatialPosition, b: SpatialPosition) { return a.row > b.row; }
+export function isNorthOf(a: SpatialPosition, b: SpatialPosition) { return a.row < b.row; }
+export function isEastOf(a: SpatialPosition, b: SpatialPosition) { return a.col > b.col; }
+export function isWestOf(a: SpatialPosition, b: SpatialPosition) { return a.col < b.col; }
+
+export function validateCrimeCondition(positions: SpatialPosition[], victimId: string, murdererId: string) {
+  const victim = positions.find((p) => p.entityId === victimId); const murderer = positions.find((p) => p.entityId === murdererId);
+  if (!victim || !murderer || victim.roomId !== murderer.roomId || victimId === murdererId) return false;
+  return positions.filter((p) => p.roomId === victim.roomId).every((p) => p.entityId === victimId || p.entityId === murdererId);
+}
+
+export function validateClueQuality(clues: MurdokuClue[]) {
+  const ids = clues.map((clue) => clue.id); const unique = new Set(ids).size === ids.length;
+  return unique && clues.length >= 10 && clues.length <= 40 && clues.every((clue) => clue.text.trim().length > 0);
+}

@@ -51,3 +51,16 @@
 - [x] Integrar el modelo de lenguaje con salida JSON estructurada y bloqueo de cambios lógicos.
 - [x] Asegurar descubrimiento de las pruebas nuevas y añadir cobertura del contrato estructurado.
 - [x] Ejecutar y registrar el build de producción.
+
+## Generación personalizada basada en Murdokeando.md
+
+- [x] Leer y documentar todas las reglas obligatorias del prompt maestro y del enfoque neuro-simbólico.
+- [x] Implementar entrevista inicial completa: jugadores, edad, dificultad de cinco niveles, temática, tono, estructura, nombres y formato.
+- [x] Implementar detección de inconsistencias, ajuste seguro de parámetros y confirmación previa.
+- [x] Implementar contrato de salida completo: título, introducción de 150–300 palabras, elementos, cuadrícula Markdown, 10–40 pistas, nivel, solución y explicación paso a paso.
+- [x] Modelar restricciones espaciales: filas/columnas, regiones, adyacencia ortogonal dentro de habitación, orientación cardinal, puertas/ventanas y condición víctima-asesino.
+- [x] Implementar generación por capas: solución/matriz primero, pistas verificables después y narrativa al final.
+- [x] Implementar control automático de contradicciones, redundancia, correspondencia pista-solución, dificultad y unicidad.
+- [x] Implementar reconstrucción o rechazo automático cuando falle una comprobación obligatoria.
+- [x] Evitar revelar la solución antes del apartado correspondiente en la experiencia de usuario.
+- [x] Añadir pruebas de entrevista, reglas espaciales, formato de salida y control de calidad.
