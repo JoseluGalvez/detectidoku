@@ -83,3 +83,23 @@
 - [x] Identificar pros y contras de Murdoku Generator frente a cada alternativa.
 - [x] Priorizar nuevas opciones por impacto, esfuerzo y diferenciación.
 - [x] Documentar el análisis competitivo y la hoja de ruta recomendada en un informe reutilizable.
+
+## Retos diarios, eventos y solver interactivo
+
+- [x] Añadir reto diario reproducible por fecha y semilla compartible.
+- [x] Añadir tabla de resultados o progreso de cada participante sin exponer la solución.
+- [x] Crear modo evento para grupos con código/enlace de invitación, nombre visible y estado de participación.
+- [x] Implementar temporizador en vivo con límite de tiempo y cierre consistente del evento.
+- [x] Implementar sincronización periódica del progreso mediante persistencia segura y consultas tipadas.
+- [x] Ampliar el solver espacial para filas, columnas, habitaciones, muros, objetos, adyacencia y orientación cardinal.
+- [x] Construir inspector de pistas con referencias, restricción formal, candidatos eliminados y deducción resultante.
+- [x] Añadir pruebas de semillas, permisos de eventos, sincronización, solver e inspector.
+- [x] Verificar visualmente los modos diario, evento e inspector en escritorio y móvil.
+
+## Correcciones de robustez detectadas
+
+- [x] Conectar la UI de juego al mutation de progreso y mostrar porcentaje o pistas usadas por participante.
+- [x] Añadir cierre server-side del evento al expirar y bloquear unión/actualización fuera de tiempo.
+- [x] Hacer que el inspector muestre referencias, restricción formal, candidatos eliminados y deducción concreta por pista.
+- [x] Añadir pruebas de permisos de eventos, sincronización, solver e inspector.
+- [x] Verificar visualmente la vista de juego con inspector en escritorio y móvil.
