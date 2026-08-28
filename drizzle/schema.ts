@@ -32,6 +32,14 @@ export const eventParticipants = mysqlTable("event_participants", {
   id: int("id").autoincrement().primaryKey(), eventId: int("eventId").notNull(), userId: int("userId").notNull(), displayName: varchar("displayName", { length: 120 }).notNull(), progressJson: json("progressJson").notNull(), elapsedSeconds: int("elapsedSeconds").default(0).notNull(), hintsUsed: int("hintsUsed").default(0).notNull(), joinedAt: timestamp("joinedAt").defaultNow().notNull(), completedAt: timestamp("completedAt"), updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
 
+export const seedHistory = mysqlTable("seed_history", {
+  id: int("id").autoincrement().primaryKey(), userId: int("userId").notNull(), seed: varchar("seed", { length: 128 }).notNull(), title: varchar("title", { length: 255 }).notNull(), snapshotJson: json("snapshotJson").notNull(), favorite: int("favorite").default(0).notNull(), createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export const styleUnlocks = mysqlTable("style_unlocks", {
+  id: int("id").autoincrement().primaryKey(), userId: int("userId").notNull(), styleKey: varchar("styleKey", { length: 64 }).notNull(), unlockedAt: timestamp("unlockedAt").defaultNow().notNull(),
+});
+
 export const gameSessions = mysqlTable("game_sessions", {
   id: int("id").autoincrement().primaryKey(), userId: int("userId").notNull(), caseId: int("caseId").notNull(), progressJson: json("progressJson").notNull(), completedAt: timestamp("completedAt"), lastPlayedAt: timestamp("lastPlayedAt").defaultNow().notNull(),
 });

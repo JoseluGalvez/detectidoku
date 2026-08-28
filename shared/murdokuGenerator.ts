@@ -1,6 +1,6 @@
 import { validateUniqueAssignment } from "./murdokuLogic";
 
-export type InterviewConfig = { players: number; ageRange: string; difficulty: "Muy fácil" | "Fácil" | "Medio" | "Difícil" | "Experto"; theme: string; tone: string; suspectCount: number; locationCount: number; objectCount: number; twists: boolean; customNames: string[]; format: string; hints: boolean; timeLimit: boolean };
+export type InterviewConfig = { players: number; ageRange: string; difficulty: "Muy fácil" | "Fácil" | "Medio" | "Difícil" | "Experto"; theme: string; tone: string; suspectCount: number; locationCount: number; objectCount: number; twists: boolean; customNames: string[]; format: string; hints: boolean; timeLimit: boolean; artStyle?: "classic" | "cluedo" | "simpsons" | "kawaii" };
 export type GeneratedMurdoku = { title: string; introduction: string; suspects: string[]; locations: string[]; objects: string[]; gridMarkdown: string; clues: { id: string; type: string; text: string; references?: string[] }[]; difficulty: { level: InterviewConfig["difficulty"]; justification: string }; solution: { responsible: string; location: string; object: string }; stepByStep: string[]; logic: { matrix: number[][]; solution: number[] } };
 
 const clueCount: Record<InterviewConfig["difficulty"], number> = { "Muy fácil": 10, Fácil: 12, Medio: 18, Difícil: 26, Experto: 34 };

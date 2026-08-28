@@ -114,3 +114,14 @@
 - [x] Crear ruta o vista específica de evento con enlace profundo y unión directa.
 - [x] Añadir pruebas de revisión, clasificación, exportación y acceso por enlace.
 - [x] Verificar visualmente revisión, ranking y evento en escritorio y móvil.
+
+## Finalización, perfil y gamificación
+
+- [x] Enviar automáticamente el resultado diario al completar correctamente una partida.
+- [x] Evitar duplicados y validar server-side el tiempo, pistas y reto asociado al resultado.
+- [x] Cargar el snapshot del Murdoku del evento desde el enlace de invitación y abrir el juego directamente.
+- [x] Añadir perfil con historial de semillas consultable, repetible y compartible.
+- [x] Añadir progreso de jugador y desbloqueos de estilos artísticos sin alterar la lógica del puzzle.
+- [x] Crear catálogo inicial de estilos desbloqueables: cluedo, simpsons y kawaii, con estados locked/unlocked.
+- [x] Añadir pruebas de finalización, historial, eventos directos y desbloqueos.
+- [x] Verificar visualmente juego completado, perfil, estilos y evento directo en escritorio y móvil.

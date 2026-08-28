@@ -10,6 +10,7 @@ import { trpc } from "@/lib/trpc";
 export default function DailyEventPanel() {
   const [invite, setInvite] = useState(""); const [displayName, setDisplayName] = useState("Detective"); const [eventCode, setEventCode] = useState(""); const [now, setNow] = useState(() => Date.now());
   const daily = trpc.daily.today.useQuery();
+  useEffect(() => { if (daily.data?.seed) window.localStorage.setItem("murdoku-daily-seed", daily.data.seed); }, [daily.data?.seed]);
   const event = trpc.events.get.useQuery({ inviteCode: eventCode }, { enabled: eventCode.length >= 4, refetchInterval: 5000 });
   const createEvent = trpc.events.create.useMutation({ onSuccess: (data) => { window.localStorage.setItem("murdoku-event-id", String(data.id)); window.localStorage.setItem("murdoku-display-name", displayName); setEventCode(data.inviteCode); setInvite(data.inviteCode); toast.success(`Evento creado: ${data.inviteCode}`); }, onError: () => toast.error("Necesitas iniciar sesión para crear un evento.") });
   const joinEvent = trpc.events.join.useMutation({ onSuccess: (data) => { window.localStorage.setItem("murdoku-event-id", String(data.eventId)); window.localStorage.setItem("murdoku-display-name", displayName); toast.success("Te has unido al evento."); }, onError: () => toast.error("No se pudo unir al evento.") });
