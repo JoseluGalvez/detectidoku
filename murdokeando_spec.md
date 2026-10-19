@@ -31,3 +31,9 @@ El modelo no puede recibir una instrucción que lo incentive a adivinar la soluc
 ## Referencia
 
 Archivo aportado por el usuario: `/home/ubuntu/upload/Murdokeando.md`.
+
+## Implementación actual
+
+Cada `GeneratedMurdoku` conserva una `spatialScene` con celdas, habitaciones, coordenadas, muros, puertas y ventanas, además de las posiciones de los personajes y los roles explícitos de víctima y responsable. `validateSpatialScene` comprueba la unicidad de filas y columnas, la cobertura de coordenadas, la presencia de vanos y la exclusividad de la habitación del crimen. El informe automático evalúa estas invariantes como Q09 y Q10 antes de permitir continuar a revisión.
+
+Los casos guardados en el historial de semillas conservan el snapshot completo. El perfil ofrece un acceso `Informe` por semilla y la ruta `/quality?seed=...` recupera el snapshot privado mediante tRPC protegido; `/quality` sin semilla mantiene un caso demostrativo público. Así, el informe mostrado puede corresponder al caso real guardado sin exponer datos de otros usuarios.

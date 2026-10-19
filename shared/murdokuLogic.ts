@@ -40,8 +40,9 @@ export function validateMurdoku(template: MurdokuTemplate): LogicValidation {
 
 export function canChangeNarrativeOnly(before: CandidateMatrix, after: CandidateMatrix) { return JSON.stringify(before) === JSON.stringify(after); }
 
-export type SpatialCell = { row: number; col: number; roomId: string; objectId?: string; wallNorth?: boolean; wallSouth?: boolean; wallEast?: boolean; wallWest?: boolean };
+export type SpatialCell = { row: number; col: number; roomId: string; objectId?: string; opening?: "door" | "window"; wallNorth?: boolean; wallSouth?: boolean; wallEast?: boolean; wallWest?: boolean };
 export type SpatialPosition = { entityId: string; row: number; col: number; roomId: string };
+export type SpatialScene = { cells: SpatialCell[]; positions: SpatialPosition[]; victimId: string; murdererId: string };
 
 export function isOrthogonallyBeside(a: SpatialPosition, b: SpatialPosition, cells: SpatialCell[]) {
   if (a.roomId !== b.roomId) return false;
@@ -66,6 +67,17 @@ export function validateCrimeCondition(positions: SpatialPosition[], victimId: s
   const victim = positions.find((p) => p.entityId === victimId); const murderer = positions.find((p) => p.entityId === murdererId);
   if (!victim || !murderer || victim.roomId !== murderer.roomId || victimId === murdererId) return false;
   return positions.filter((p) => p.roomId === victim.roomId).every((p) => p.entityId === victimId || p.entityId === murdererId);
+}
+
+export function validateSpatialScene(scene: SpatialScene) {
+  if (!scene.cells.length || !scene.positions.length) return false;
+  const coordinates = new Set(scene.cells.map((cell) => `${cell.row}:${cell.col}`));
+  if (coordinates.size !== scene.cells.length || scene.positions.some((position) => !coordinates.has(`${position.row}:${position.col}`))) return false;
+  if (!scene.cells.some((cell) => cell.opening === "door") || !scene.cells.some((cell) => cell.opening === "window")) return false;
+  const rows = new Set(scene.positions.map((position) => position.row));
+  const cols = new Set(scene.positions.map((position) => position.col));
+  if (rows.size !== scene.positions.length || cols.size !== scene.positions.length) return false;
+  return validateCrimeCondition(scene.positions, scene.victimId, scene.murdererId);
 }
 
 export function validateClueQuality(clues: MurdokuClue[]) {

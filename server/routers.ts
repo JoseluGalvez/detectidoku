@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { COOKIE_NAME } from "@shared/const";
-import { createGeneratedCase, createMurdokuEvent, getDailyChallenge, finishMurdokuEvent, getMurdokuEvent, getMurdokuEventById, listDailyResults, listDailyResultsBySeed, listEventParticipants, listGeneratedCases, listTemplates, listSeedHistory, listStyleUnlocks, saveDailyChallenge, saveDailyResult, getDailyResult, recordDailyWin, getUserAchievementState, saveSeedHistory, unlockStyle, upsertEventParticipant } from "./db";
+import { createGeneratedCase, createMurdokuEvent, getDailyChallenge, finishMurdokuEvent, getMurdokuEvent, getMurdokuEventById, getSeedHistoryBySeed, listDailyResults, listDailyResultsBySeed, listEventParticipants, listGeneratedCases, listTemplates, listSeedHistory, listStyleUnlocks, saveDailyChallenge, saveDailyResult, getDailyResult, recordDailyWin, getUserAchievementState, saveSeedHistory, unlockStyle, upsertEventParticipant } from "./db";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { protectedProcedure, publicProcedure, router } from "./_core/trpc";
@@ -19,6 +19,7 @@ export const appRouter = router({
   }),
   profile: router({
     history: protectedProcedure.query(({ ctx }) => listSeedHistory(ctx.user.id)),
+    quality: protectedProcedure.input(z.object({ seed: z.string().min(3).max(128) })).query(({ ctx, input }) => getSeedHistoryBySeed(ctx.user.id, input.seed)),
     saveSeed: protectedProcedure.input(z.object({ seed: z.string().min(3).max(128), title: z.string().min(1).max(255), snapshot: z.unknown(), favorite: z.boolean().optional() })).mutation(({ ctx, input }) => saveSeedHistory({ userId: ctx.user.id, seed: input.seed, title: input.title, snapshotJson: input.snapshot, favorite: input.favorite ? 1 : 0 })),
     styles: protectedProcedure.query(async ({ ctx }) => { const unlocked = await listStyleUnlocks(ctx.user.id); const keys = new Set(unlocked.map((item) => item.styleKey)); return ["classic", "cluedo", "simpsons", "kawaii"].map((key) => ({ key, unlocked: key === "classic" || keys.has(key) })); }),
     unlockStyle: protectedProcedure.input(z.object({ styleKey: z.enum(["cluedo", "simpsons", "kawaii"]) })).mutation(async ({ ctx, input }) => { const state = await getUserAchievementState(ctx.user.id); const requiredWins = input.styleKey === "cluedo" ? 1 : input.styleKey === "simpsons" ? 3 : 5; if ((state?.dailyWins ?? 0) < requiredWins) throw new Error("achievement_locked"); return unlockStyle({ userId: ctx.user.id, styleKey: input.styleKey }); }),

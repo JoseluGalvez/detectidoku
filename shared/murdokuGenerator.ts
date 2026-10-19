@@ -1,9 +1,9 @@
-import { validateUniqueAssignment } from "./murdokuLogic";
+import { validateSpatialScene, validateUniqueAssignment, type SpatialScene } from "./murdokuLogic";
 
 export type InterviewConfig = { players: number; ageRange: string; difficulty: "Muy fácil" | "Fácil" | "Medio" | "Difícil" | "Experto"; theme: string; tone: string; suspectCount: number; locationCount: number; objectCount: number; twists: boolean; customNames: string[]; format: string; hints: boolean; timeLimit: boolean; artStyle?: "classic" | "cluedo" | "simpsons" | "kawaii" };
 export type QualityCheck = { id: string; label: string; severity: "crítico" | "importante"; status: "cumple" | "no_cumple" | "revisar"; evidence: string };
 export type QualityReport = { passed: boolean; checks: QualityCheck[]; criticalFailures: number; importantFailures: number };
-export type GeneratedMurdoku = { title: string; introduction: string; suspects: string[]; locations: string[]; objects: string[]; gridMarkdown: string; clues: { id: string; type: string; text: string; references?: string[] }[]; difficulty: { level: InterviewConfig["difficulty"]; justification: string }; solution: { responsible: string; location: string; object: string }; stepByStep: string[]; logic: { matrix: number[][]; solution: number[] }; qualityReport: QualityReport };
+export type GeneratedMurdoku = { title: string; introduction: string; suspects: string[]; locations: string[]; objects: string[]; gridMarkdown: string; clues: { id: string; type: string; text: string; references?: string[] }[]; difficulty: { level: InterviewConfig["difficulty"]; justification: string }; solution: { responsible: string; location: string; object: string }; stepByStep: string[]; logic: { matrix: number[][]; solution: number[] }; spatialScene: SpatialScene; qualityReport: QualityReport };
 
 const clueCount: Record<InterviewConfig["difficulty"], number> = { "Muy fácil": 10, Fácil: 12, Medio: 18, Difícil: 26, Experto: 34 };
 
@@ -35,6 +35,7 @@ export function evaluateMurdokuQuality(puzzle: Omit<GeneratedMurdoku, "qualityRe
   const words = puzzle.introduction.trim().split(/\s+/).filter(Boolean).length;
   const referencesValid = puzzle.clues.every((clue) => (clue.references ?? []).every((reference) => [...puzzle.suspects, ...puzzle.locations, ...puzzle.objects].includes(reference)));
   const logical = validateUniqueAssignment(puzzle.logic.matrix);
+  const spatial = validateSpatialScene(puzzle.spatialScene);
   const add = (id: string, label: string, severity: QualityCheck["severity"], status: QualityCheck["status"], evidence: string) => checks.push({ id, label, severity, status, evidence });
   add("Q01", "Caso completo", "crítico", puzzle.title && puzzle.clues.length > 0 && puzzle.stepByStep.length > 0 ? "cumple" : "no_cumple", "Título, pistas y resolución paso a paso presentes.");
   add("Q02", "Entrevista completa", "importante", config.theme && config.tone && config.format ? "cumple" : "no_cumple", `${config.theme} · ${config.tone} · ${config.format}.`);
@@ -44,8 +45,8 @@ export function evaluateMurdokuQuality(puzzle: Omit<GeneratedMurdoku, "qualityRe
   add("Q06", "Entre 10 y 40 pistas", "crítico", puzzle.clues.length >= 10 && puzzle.clues.length <= 40 ? "cumple" : "no_cumple", `${puzzle.clues.length} pistas generadas.`);
   add("Q07", "Pistas sin contradicciones evitables", "crítico", puzzle.clues.length === new Set(puzzle.clues.map((clue) => clue.text)).size ? "cumple" : "no_cumple", "No se detectan textos de pista duplicados.");
   add("Q08", "Solución única", "crítico", logical.valid && logical.solution ? "cumple" : "no_cumple", logical.valid ? "La matriz tiene una única asignación." : "La matriz no supera el solver.");
-  add("Q09", "Reglas espaciales formales", "crítico", "no_cumple", "El snapshot actual aún no contiene mapa de habitaciones, muros y coordenadas espaciales completas.");
-  add("Q10", "Escena víctima–asesino", "crítico", "no_cumple", "Faltan roles explícitos de víctima y condición de exclusividad por habitación.");
+  add("Q09", "Reglas espaciales formales", "crítico", spatial ? "cumple" : "no_cumple", spatial ? "Mapa con habitaciones, coordenadas, muros y vanos validado." : "El snapshot no supera la validación espacial formal.");
+  add("Q10", "Escena víctima–asesino", "crítico", spatial ? "cumple" : "no_cumple", spatial ? "Víctima y responsable comparten habitación sin un tercer sospechoso." : "Faltan roles explícitos de víctima y condición de exclusividad por habitación.");
   add("Q11", "Correspondencia pista–entidad", "crítico", referencesValid ? "cumple" : "no_cumple", referencesValid ? "Todas las referencias existen." : "Hay referencias a entidades inexistentes.");
   add("Q12", "Explicación verificable", "importante", puzzle.stepByStep.length >= 3 ? "cumple" : "no_cumple", `${puzzle.stepByStep.length} pasos explicativos.`);
   add("Q13", "Dificultad declarada", "importante", clueCount[config.difficulty] === puzzle.clues.length ? "cumple" : "revisar", `${config.difficulty} calibrado a ${puzzle.clues.length} pistas.`);
@@ -66,6 +67,15 @@ export function generateDeterministicMurdoku(config: InterviewConfig): Generated
   const clues = buildDynamicClues(names, locations, objects, count);
   const responsible = names[0]; const location = locations[0]; const object = objects[0];
   const introduction = `En una noche de ${config.theme.toLowerCase()}, una evidencia desapareció justo cuando el grupo se preparaba para cerrar el caso. ${names.slice(0, 3).join(", ")} estuvieron presentes, pero solo una persona pudo coincidir con la víctima en la misma área. Tu objetivo es reconstruir la escena usando las pistas, descartar cada combinación imposible y señalar al responsable sin adivinar. El tono ${config.tone.toLowerCase()} debe acompañar la investigación sin ocultar información necesaria. Cada dato pertenece a una relación verificable del tablero y la solución se calcula antes de redactar la historia. Observa las filas, las columnas y las relaciones entre personas, lugares y evidencias. Algunas pistas parecen pequeñas, pero al cruzarlas producen una cadena de deducciones que reduce progresivamente los candidatos. Anota cada descarte en la cuadrícula, comprueba las referencias y reserva tu conclusión hasta haber comprobado todas las restricciones. La investigación termina cuando una sola asignación explica el caso completo y cada pista encaja sin contradicción.`;
-  const base = { title: `${config.theme}: el caso de la evidencia perdida`, introduction, suspects: names, locations, objects, gridMarkdown: buildGridMarkdown(names, locations), clues, difficulty: { level: config.difficulty, justification: `Se han seleccionado ${count} pistas con dificultad calibrada por profundidad de deducción.` }, solution: { responsible, location, object }, stepByStep: [`Comienza descartando las posiciones incompatibles con las pistas directas.`, `Cruza filas y columnas para conservar una única posición por sospechoso.`, `Comprueba la habitación compartida por víctima y responsable.`, `La matriz tiene exactamente una solución: ${checked.solution?.join(", ")}.`], logic: { matrix, solution: checked.solution! } };
+  const spatialScene: SpatialScene = {
+    cells: Array.from({ length: size * size }, (_, index) => {
+      const row = Math.floor(index / size); const col = index % size;
+      return { row, col, roomId: row < 2 && col < 2 ? "crime-room" : locations[Math.min(row, locations.length - 1)] ?? "Área 1", opening: row === 0 && col === 1 ? "door" : row === 1 && col === 0 ? "window" : undefined, wallEast: col === size - 1, wallSouth: row === size - 1 };
+    }),
+    positions: names.map((entityId, index) => ({ entityId, row: index, col: index, roomId: index < 2 ? "crime-room" : locations[Math.min(index, locations.length - 1)] ?? "Área 1" })),
+    victimId: names[1],
+    murdererId: names[0],
+  };
+  const base = { title: `${config.theme}: el caso de la evidencia perdida`, introduction, suspects: names, locations, objects, gridMarkdown: buildGridMarkdown(names, locations), clues, difficulty: { level: config.difficulty, justification: `Se han seleccionado ${count} pistas con dificultad calibrada por profundidad de deducción.` }, solution: { responsible, location, object }, stepByStep: [`Comienza descartando las posiciones incompatibles con las pistas directas.`, `Cruza filas y columnas para conservar una única posición por sospechoso.`, `Comprueba la habitación compartida por víctima y responsable.`, `La matriz tiene exactamente una solución: ${checked.solution?.join(", ")}.`], logic: { matrix, solution: checked.solution! }, spatialScene };
   return { ...base, qualityReport: evaluateMurdokuQuality(base, config) };
 }

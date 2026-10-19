@@ -8,8 +8,9 @@ describe("Murdokeando quality checklist", () => {
     const puzzle = generateDeterministicMurdoku(config);
     expect(puzzle.qualityReport.checks).toHaveLength(16);
     expect(puzzle.qualityReport.checks.find((check) => check.id === "Q08")?.status).toBe("cumple");
-    expect(puzzle.qualityReport.checks.find((check) => check.id === "Q09")?.status).toBe("no_cumple");
-    expect(puzzle.qualityReport.passed).toBe(false);
+    expect(puzzle.qualityReport.checks.find((check) => check.id === "Q09")?.status).toBe("cumple");
+    expect(puzzle.qualityReport.checks.find((check) => check.id === "Q10")?.status).toBe("cumple");
+    expect(puzzle.qualityReport.passed).toBe(true);
   });
 
   it("reports invalid entity references instead of silently accepting them", () => {
