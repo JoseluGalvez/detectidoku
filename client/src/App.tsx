@@ -7,13 +7,15 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
 import QualityReport from "./pages/QualityReport";
 import EventView from "./pages/EventView";
-import Profile from "./pages/Profile";
+import Profile from "@/pages/Profile";
+import AsesidokuExperience from "@/pages/AsesidokuExperience";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
   return (
     <Switch>
-      <Route path={"/"} component={Home} />
+      <Route path={"/"} component={AsesidokuExperience} />
+      <Route path={"/studio"} component={Home} />
       <Route path={"/event/:inviteCode"} component={EventView} />
       <Route path="/profile" component={Profile} />
       <Route path="/quality" component={QualityReport} />
